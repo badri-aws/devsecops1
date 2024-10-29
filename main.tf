@@ -57,7 +57,7 @@ data "aws_ami" "amazon_linux" {
 
   filter {
     name   = "name"
-    values = ["*al2023-ami-2023.4.*-kernel-6.1-x86_64*"]
+    values = ["*al2023-ami-2023.6.*-kernel-6.1-x86_64*"]
   }
 
   filter {
@@ -73,8 +73,8 @@ data "aws_ami" "amazon_linux" {
   owners = ["amazon"] # Canonical
 }
 
-resource "aws_iam_role" "test_role" {
-  name = "test_role"
+resource "aws_iam_role" "test_role1" {
+  name = "test_role1"
 
   assume_role_policy = <<EOF
 {
@@ -93,14 +93,14 @@ resource "aws_iam_role" "test_role" {
 EOF
 }
 
-resource "aws_iam_instance_profile" "test_profile" {
-  name = "test_profile"
-  role = "${aws_iam_role.test_role.name}"
+resource "aws_iam_instance_profile" "test_profile1" {
+  name = "test_profile1"
+  role = "${aws_iam_role.test_role1.name}"
 }
 
-resource "aws_iam_role_policy" "test_policy" {
-  name = "test_policy"
-  role = "${aws_iam_role.test_role.id}"
+resource "aws_iam_role_policy" "test_policy1" {
+  name = "test_policy1"
+  role = "${aws_iam_role.test_role1.id}"
 
   policy = <<EOF
 {
@@ -117,10 +117,10 @@ EOF
 }
 
 resource "aws_instance" "web" {
-  ami             = "ami-04c913012f8977029"
+  ami             = "ami-06b21ccaeff8cd686"
   instance_type   = "t2.medium" 
   key_name        = var.key_name
-  iam_instance_profile = "${aws_iam_instance_profile.test_profile.name}"
+  iam_instance_profile = "${aws_iam_instance_profile.test_profile1.name}"
   security_groups = [aws_security_group.jenkins_sg.name]
   user_data       = "${file("install_jenkins.sh")}"
   tags = {
